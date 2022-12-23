@@ -1,12 +1,11 @@
 package actions
 
 import (
-	"net/http"
-	"sync"
-
 	"blog/locales"
 	"blog/models"
 	"blog/public"
+	"net/http"
+	"sync"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo-pop/v3/pop/popmw"
@@ -57,21 +56,39 @@ func App() *buffalo.App {
 		// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
 		// Remove to disable this.
 		app.Use(csrf.New)
-
 		// Wraps each request in a transaction.
 		//   c.Value("tx").(*pop.Connection)
 		// Remove to disable this.
 		app.Use(popmw.Transaction(models.DB))
+		app.Use(SetCurrentUser)
 		// Setup and use translations:
 		app.Use(translations())
 
 		app.GET("/", HomeHandler)
 
+		// users routes
 		auth := app.Group("/users")
 		auth.GET("/register", UsersRegisterGet)
 		auth.POST("/register", UsersRegisterPost)
-		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
+		auth.GET("/login", UsersLoginGet)
+		auth.POST("/login", UsersLoginPost)
+		auth.GET("/logout", UsersLogout)
+		postGroup := app.Group("/posts")
+		postGroup.GET("/index", PostsIndex)
+		postGroup.GET("/create", AdminRequired(PostsCreateGet))
+		postGroup.POST("/create", AdminRequired(PostsCreatePost))
+		postGroup.GET("/detail/{pid}", PostsDetail)
+		postGroup.GET("/edit/{pid}", AdminRequired(PostsEditGet))
+		postGroup.POST("/edit/{pid}", AdminRequired(PostsEditPost))
+		postGroup.GET("/delete/{pid}", AdminRequired(PostsDelete))
+		commentsGroup := app.Group("/comments")
+		commentsGroup.Use(LoginRequired)
+		commentsGroup.POST("/create/{pid}", CommentsCreatePost)
+		commentsGroup.GET("/edit/{cid}", CommentsEditGet)
+		commentsGroup.POST("/edit/{cid}", CommentsEditPost)
+		commentsGroup.GET("/delete/{cid}", CommentsDelete)
 
+		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})
 
 	return app

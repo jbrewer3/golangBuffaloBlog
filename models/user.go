@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -14,6 +15,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// User is used by pop to map your users database table to your go code.
 type User struct {
 	ID              uuid.UUID `json:"id" db:"id"`
 	Username        string    `json:"username" db:"username" form:"username"`
@@ -41,17 +43,6 @@ func (u Users) String() string {
 	return string(ju)
 }
 
-func (u *User) Create(tx *pop.Connection) (*validate.Errors, error) {
-	u.Email = strings.ToLower(u.Email)
-	u.Admin = false
-	pwdHash, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return validate.NewErrors(), errors.WithStack(err)
-	}
-	u.PasswordHash = string(pwdHash)
-	return tx.ValidateAndCreate(u)
-}
-
 // Validate gets run every time you call a "pop.Validate*" (pop.ValidateAndSave, pop.ValidateAndCreate, pop.ValidateAndUpdate) method.
 // This method is not required and may be deleted.
 func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
@@ -71,6 +62,24 @@ func (u *User) Validate(tx *pop.Connection) (*validate.Errors, error) {
 // This method is not required and may be deleted.
 func (u *User) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
+}
+
+// ValidateUpdate gets run every time you call "pop.ValidateAndUpdate" method.
+// This method is not required and may be deleted.
+func (u *User) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
+	return validate.NewErrors(), nil
+}
+
+// Create validates and creates a new User.
+func (u *User) Create(tx *pop.Connection) (*validate.Errors, error) {
+	u.Email = strings.ToLower(u.Email)
+	u.Admin = false
+	pwdHash, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return validate.NewErrors(), errors.WithStack(err)
+	}
+	u.PasswordHash = string(pwdHash)
+	return tx.ValidateAndCreate(u)
 }
 
 type UsernameNotTaken struct {
@@ -104,4 +113,22 @@ func (v *EmailNotTaken) IsValid(errors *validate.Errors) {
 		// found a user with the same email
 		errors.Add(validators.GenerateKey(v.Name), "An account with that email already exists.")
 	}
+}
+
+// Authorize checks user's password for logging in
+func (u *User) Authorize(tx *pop.Connection) error {
+	err := tx.Where("email = ?", strings.ToLower(u.Email)).First(u)
+	if err != nil {
+		if errors.Cause(err) == sql.ErrNoRows {
+			// couldn't find an user with that email address
+			return errors.New("User not found.")
+		}
+		return errors.WithStack(err)
+	}
+	// confirm that the given password matches the hashed password from the db
+	err = bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(u.Password))
+	if err != nil {
+		return errors.New("Invalid password.")
+	}
+	return nil
 }
