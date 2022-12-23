@@ -1,39 +1,25 @@
-# Welcome to Buffalo
+<p align="center"><img src="https://raw.githubusercontent.com/gobuffalo/buffalo/main/logo.svg" width="360"></p>
 
-Thank you for choosing Buffalo for your web development needs.
+<p align="center">
+<a href="https://pkg.go.dev/github.com/gobuffalo/cli"><img src="https://pkg.go.dev/badge/github.com/gobuffalo/cli" alt="PkgGoDev"></a>
+<img src="https://github.com/gobuffalo/cli/workflows/Tests/badge.svg" alt="Tests Status" />
+<a href="https://goreportcard.com/report/github.com/gobuffalo/cli"><img src="https://goreportcard.com/badge/github.com/gobuffalo/cli" alt="Go Report Card" /></a>
+</p>
 
-## Database Setup
+# Buffalo CLI
 
-It looks like you chose to set up your application using a database! Fantastic!
+This is the repo for the Buffalo CLI. The Buffalo CLI is a tool to develop, test and deploy your Buffalo applications.
 
-The first thing you need to do is open up the "database.yml" file and edit it to use the correct usernames, passwords, hosts, etc... that are appropriate for your environment.
+## Installation
 
-You will also need to make sure that **you** start/install the database of your choice. Buffalo **won't** install and start it for you.
+To install the Buffalo CLI you can run the following command:
 
-### Create Your Databases
-
-Ok, so you've edited the "database.yml" file and started your database, now Buffalo can create the databases in that file for you:
-
-```console
-buffalo pop create -a
+```bash
+go install github.com/gobuffalo/cli/cmd/buffalo@latest
 ```
 
-## Starting the Application
+<!-- Installing the Buffalo CLI requires Go 1.16 or newer as it depends heavily on the embed package. Once you have ensured you installed Go 1.16 or newer,  -->
 
-Buffalo ships with a command that will watch your application and automatically rebuild the Go binary and any assets for you. To do that run the "buffalo dev" command:
+## Usage
 
-```console
-buffalo dev
-```
-
-If you point your browser to [http://127.0.0.1:3000](http://127.0.0.1:3000) you should see a "Welcome to Buffalo!" page.
-
-**Congratulations!** You now have your Buffalo application up and running.
-
-## What Next?
-
-We recommend you heading over to [http://gobuffalo.io](http://gobuffalo.io) and reviewing all of the great documentation there.
-
-Good luck!
-
-[Powered by Buffalo](http://gobuffalo.io)
+Once installed, the Buffalo CLI can be used by invoking the `buffalo` command. To know more about the available commands, run the `buffalo help` command. or you can also get details on a specific command by running `buffalo help <command>`.
