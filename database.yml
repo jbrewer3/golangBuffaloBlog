@@ -1,8 +1,8 @@
 ---
 development:
   dialect: postgres
-  database: BlogDB
-  user: joshuabrewer  
+  database: blogdb
+  user: joshb  
   password: B0j@ngl3s3
   host: 127.0.0.1
   pool: 5
