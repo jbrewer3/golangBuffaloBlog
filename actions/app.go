@@ -71,6 +71,7 @@ func App() *buffalo.App {
 		auth.GET("/register", UsersRegisterGet)
 		auth.POST("/register", UsersRegisterPost)
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
+
 	})
 
 	return app
