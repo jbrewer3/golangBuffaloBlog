@@ -1,9 +1,9 @@
 ---
 development:
   dialect: postgres
-  database: blog_development
-  user: postgres
-  password: postgres
+  database: BlogDB
+  user: joshuabrewer  
+  password: B0j@ngl3s3
   host: 127.0.0.1
   pool: 5
 
