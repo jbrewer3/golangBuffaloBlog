@@ -6,11 +6,16 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-2 post">
         <%= for (p) in posts { %>
-            <hr>
-            <a href="<%= postsDetailPidPath({pid: p.ID}) %>"><h1><%= p.Title %></h1></a>
-            <p><%= markdown(truncate(p.Content, {"size": 200})) %></p>
+            <div class="card" style="width: 100%;">
+              <img class="card-img-top" src="<%= assetPath("images/ArgoCD.jpg") %>" alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title"><%= p.Title %></h5>
+                <p class="card-text"><%= markdown(truncate(p.Content, {"size": 50})) %></p>
+                <a href="<%= postsDetailPidPath({pid: p.ID}) %>" class="btn btn-read-post">Read Article</a>
+              </div>
+            </div>
         <% } %>
     </div>
 </div>
