@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+
 // PostsIndex default implementation.
 func PostsIndex(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
