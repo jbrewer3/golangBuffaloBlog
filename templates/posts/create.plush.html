@@ -14,10 +14,10 @@
 </div>
 <div class="row mt-3 justify-content-center">
     <div class="col-md-8 col-sm-10">
-        <h2>Create a new post</h2>
+        <!-- <h2>Create a new post</h2> -->
         <form action="<%= postsCreatePath() %>" method="POST">
             <%= csrf() %>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="title">Title</label>
                 <input type="text" name="Title" class="form-control" id="title" value="<%= post.Title %>">
             </div>
@@ -27,8 +27,11 @@
             </div>
             <div class="form-group">
                 <input type="file" name="" id="">
+            </div> -->
+            <h3>New Article</h3>
+            <div id="editorjs">
             </div>
-            <button type="submit" class="btn btn-primary">Publish</button>
+            <button type="submit" class="btn btn-primary button">Publish</button>
         </form>
     </div>
 </div>
